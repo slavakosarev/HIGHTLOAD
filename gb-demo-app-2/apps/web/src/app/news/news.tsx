@@ -1,5 +1,6 @@
 import './news.module.scss';
 import { useEffect, useState } from 'react';
+import getData from '../utils/getData';
 
 /* eslint-disable-next-line */
 export interface NewsProps {}
@@ -12,17 +13,22 @@ export interface PeaceOfNews {
 
 export function News(props: NewsProps) {
   const [news, setNews] = useState([] as PeaceOfNews[]);
-  const sortNews = (news: PeaceOfNews[]) => {
-    return news.sort((a, b) => a.createdAt - b.createdAt)
+  const sortNews = (news: PeaceOfNews[] | unknown) => {
+    if (news instanceof Array) {
+      return news.sort((a, b) => a.createdAt - b.createdAt)
+    }
+    return []
   }
 
   useEffect(() => {
-    fetch('http://localhost:3333/api/news')
-      .then(response => response.json())
-      .then(news => {
-        const sortedNews = sortNews(news);
-
-        setNews(sortedNews);
+    // fetch('http://localhost:3333/api/news')
+    //   .then(response => response.json())
+    //   .then(news => {
+    //     const sortedNews = sortNews(news);
+    getData('http://localhost:3333/api/news')
+      .then((news) => {
+      const sortedNews = sortNews(news);
+      setNews(sortedNews);
       })
   }, []);
 
